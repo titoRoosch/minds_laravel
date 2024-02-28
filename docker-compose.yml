@@ -1,30 +1,35 @@
-version: '3.8'
+version: '3'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "8080:80"
+      - "3303:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - minds_laravel_app_network
+
+  web:
+    build: .
+    restart: always
+    ports:
+      - "8000:80"
     volumes:
       - .:/var/www/html
-    environment:
-      APACHE_DOCUMENT_ROOT: /var/www/html/public
     depends_on:
-      - mysql
-
-  mysql:
-    image: mysql:5.7
-    environment:
-      MYSQL_DATABASE: laravel_db
-      MYSQL_USER: laravel_user
-      MYSQL_PASSWORD: laravel_password
-      MYSQL_ROOT_PASSWORD: root_password
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
+      - db
+    networks:
+      - minds_laravel_app_network
 
 volumes:
-  mysql_data:
+  db_data:
+networks:
+  minds_laravel_app_network:
+    external: true
