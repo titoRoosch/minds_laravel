@@ -8,6 +8,8 @@ REQUISITOS
 
 INSTRUÇOES
 
+criar arquivo .env baseado em .env.example
+
 docker-compose build
 docker-compose up -d
 docker-compose exec web bash
